@@ -1,0 +1,24 @@
+{
+  "name": "majorproject-zerodha",
+  "version": "1.0.0",
+  "description": "Main project for Zerodha clone with backend, fronted, and dashboard",
+  "main": "index.js",
+  "scripts": {
+  "install-all": "npm install --prefix backend && npm install --prefix fronted && npm install --prefix dashboard",
+  "build-all": "npm run build --prefix fronted && npm run build --prefix dashboard",
+  "start": "node backend/index.js",
+  "start-dev": "nodemon backend/index.js"
+
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deep3sh1/majorproject.Zerodha.git"
+  },
+  "keywords": ["zerodha", "dashboard", "fronted", "backend"],
+  "author": "Deepesh Wadhe",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/deep3sh1/majorproject.Zerodha/issues"
+  },
+  "homepage": "https://github.com/deep3sh1/majorproject.Zerodha#readme"
+}

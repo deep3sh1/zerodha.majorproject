@@ -9,6 +9,9 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  // Replace with your deployed backend URL
+  const API_URL = "https://zerodha-majorproject.onrender.com";
+
   const handleSignup = async (e) => {
     e.preventDefault();
 
@@ -18,7 +21,7 @@ export default function Signup() {
     }
 
     try {
-      const res = await fetch("http://localhost:3002/api/auth/signup", {
+      const res = await fetch(`${API_URL}/api/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -34,8 +37,8 @@ export default function Signup() {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
 
-        // Redirect to dashboard
-       window.location.href = `http://localhost:3001?token=${data.token}`;
+        // Redirect to dashboard (frontend URL) after signup
+        window.location.href = `https://zerodha-majorproject.onrender.com/dashboard?token=${data.token}`;
       } else {
         alert(data.message || "Signup failed");
       }

@@ -10,7 +10,7 @@ export default function Signup() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   // Replace with your deployed backend URL
-  const API_URL = "https://zerodha-majorproject.onrender.com";
+  const API_URL = "https://zerodha-majorproject-dashboard.onrender.com";
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -38,7 +38,7 @@ export default function Signup() {
         localStorage.setItem("user", JSON.stringify(data.user));
 
         // Redirect to dashboard (frontend URL) after signup
-        window.location.href = `https://zerodha-majorproject.onrender.com/dashboard?token=${data.token}`;
+        window.location.href = `https://zerodha-majorproject-dashboard.onrender.com/dashboard?token=${data.token}`;
       } else {
         alert(data.message || "Signup failed");
       }
@@ -132,3 +132,4 @@ export default function Signup() {
     </div>
   );
 }
+

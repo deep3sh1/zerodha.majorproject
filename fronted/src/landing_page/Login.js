@@ -5,23 +5,18 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Deployed backend URL
-  const API_URL = "https://zerodha-majorproject-2.onrender.com";
-
-  // Deployed frontend dashboard URL
-  const DASHBOARD_URL = "https://zerodha-majorproject-dashboard.onrender.com";
-
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const res = await fetch(`${API_URL}/api/auth/login`, {
+      const res = await fetch("http://localhost:3002/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ identifier, password }),
       });
 
+      // Parse JSON safely
       const data = await res.json().catch(() => null);
 
       if (!data) {
@@ -34,8 +29,8 @@ const Login = () => {
         localStorage.setItem("user", JSON.stringify(data.user));
         localStorage.setItem("token", data.token);
 
-        // Redirect to deployed dashboard with token
-        window.location.href = `${DASHBOARD_URL}?token=${data.token}&username=${data.user.username}`;
+        // Redirect to dashboard (port 3001)
+        window.location.href = `http://localhost:3001?token=${data.token}&username=${data.user.username}`;
       } else {
         alert(data.message || "Invalid username or password");
       }
@@ -100,4 +95,3 @@ const Login = () => {
 };
 
 export default Login;
-

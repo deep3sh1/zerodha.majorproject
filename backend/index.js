@@ -1,14 +1,14 @@
-require('dotenv').config();
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
-const cors = require('cors');
+const cors = require("cors");
 const cookieParser = require("cookie-parser");
 
 const HoldingModel = require("./models/HoldingModel");
 const PositionModel = require("./models/PositionModel");
 const OrderModel = require("./models/OrderModel");
 
-const authRoutes = require("./routes/authRoutes"); 
+const authRoutes = require("./routes/authRoutes");
 const auth = require("./middleware/authMiddleware");
 
 const PORT = process.env.PORT || 3002;
@@ -16,59 +16,63 @@ const MONGO_URI = process.env.MONGO_URL;
 
 const app = express();
 
-// -------------------- MIDDLEWARE --------------------
+// -------------------- FIXED CORS --------------------
+const allowedOrigins = [
+  "https://zerodha-majorproject-fronted.onrender.com",
+  "https://zerodha-majorproject-dashboard.onrender.com",
+  "https://zerodha-majorproject-2.onrender.com", // backend itself
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "http://localhost:3002",
+];
+
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:3001"],
+    origin: function (origin, callback) {
+      // Allow requests with no origin (mobile apps, curl, etc.)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS: " + origin));
+      }
+    },
     credentials: true,
   })
 );
+
 app.use(express.json());
 app.use(cookieParser());
 
 // -------------------- API ROUTES --------------------
-
-// Auth routes
 app.use("/api/auth", authRoutes);
 
-// Protected example route
 app.get("/protected", auth, (req, res) => {
   res.json({ message: "You are authorized!", user: req.user });
 });
 
-// Holdings and positions
+// Holdings
 app.get("/allHoldings", async (req, res) => {
   try {
-    const allHolding = await HoldingModel.find({});
-    res.json(allHolding);
+    const data = await HoldingModel.find({});
+    res.json(data);
   } catch (err) {
-    console.error(err);
     res.status(500).send("Error fetching holdings");
   }
 });
 
+// Positions
 app.get("/allPosition", async (req, res) => {
   try {
-    const allPosition = await PositionModel.find({});
-    res.json(allPosition);
+    const data = await PositionModel.find({});
+    res.json(data);
   } catch (err) {
-    console.error(err);
     res.status(500).send("Error fetching positions");
   }
 });
 
-// Orders
-app.get("/orders", auth, async (req, res) => {
-  try {
-    const userId = req.user.id; // From auth middleware
-    const userOrders = await OrderModel.find({ userId }).sort({ createdAt: -1 });
-    res.json(userOrders);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Error fetching orders" });
-  }
-});
-// Inside POST /newOrder, ensure auth and userId
+// Orders (protected)
 app.post("/newOrder", auth, async (req, res) => {
   try {
     const { name, qty, price, mode } = req.body;
@@ -82,29 +86,26 @@ app.post("/newOrder", auth, async (req, res) => {
       qty,
       price,
       mode,
-      userId: req.user.id, // associate order with logged-in user
+      userId: req.user.id,
     });
 
     await newOrder.save();
     res.json({ message: "Order successfully placed", order: newOrder });
   } catch (err) {
-    console.error("Error saving order:", err);
     res.status(500).json({ message: "Error saving order" });
   }
 });
 
-// GET /orders
 app.get("/orders", auth, async (req, res) => {
   try {
-    const userId = req.user.id;
-    const userOrders = await OrderModel.find({ userId }).sort({ createdAt: -1 });
-    res.json(userOrders);
+    const orders = await OrderModel.find({ userId: req.user.id }).sort({
+      createdAt: -1,
+    });
+    res.json(orders);
   } catch (err) {
-    console.error(err);
     res.status(500).json({ message: "Error fetching orders" });
   }
 });
-
 
 // -------------------- START SERVER --------------------
 const startServer = async () => {
@@ -113,7 +114,7 @@ const startServer = async () => {
     console.log("MongoDB connected");
 
     app.listen(PORT, () => {
-      console.log(`Backend started on port ${PORT}`);
+      console.log(`Backend running on port ${PORT}`);
     });
   } catch (err) {
     console.error("MongoDB connection error:", err);

@@ -6,10 +6,10 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   // Deployed backend URL
-  const API_URL = "https://zerodha-majorproject.onrender.com";
+  const API_URL = "https://zerodha-majorproject-2.onrender.com";
 
   // Deployed frontend dashboard URL
-  const DASHBOARD_URL = "https://zerodha-majorproject.onrender.com/dashboard";
+  const DASHBOARD_URL = "https://zerodha-majorproject-dashboard.onrender.com";
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -100,3 +100,4 @@ const Login = () => {
 };
 
 export default Login;
+
